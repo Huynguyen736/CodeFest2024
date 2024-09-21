@@ -10,7 +10,8 @@ import jsclub.codefest2024.sdk.model.players.Player;
 import java.util.List;
 
 public class MoveAndAttack {
-    static boolean Atk = false;
+    static String Atk;
+    static Node ple;
     public static void moveAndAttack(Player closestPlayer, Node currentNode, Hero hero, List<Player> otherPlayers, List<Node> restrictedNodes) {
         try {
             GameMap gameMap = hero.getGameMap();
@@ -34,7 +35,7 @@ public class MoveAndAttack {
                     closestPlayer = getClosestSomething.getClosestPlayer(otherPlayers, player);
                     hero.move(PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, closestPlayer, false));
                 }
-            }   else if (hero.getInventory().getGun() != null && PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, closestPlayer, false).length() >= 4) {
+            }   else if (hero.getInventory().getGun() != null && (hero.getInventory().getMelee().getId() == "HAND" || PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, closestPlayer, false).length() >= 4)) {
                 if ((currentNode.getX() - closestPlayer.getX() == 0 ||
                         currentNode.getY() - closestPlayer.getY() == 0) &&
                         Math.abs(currentNode.getX() - closestPlayer.getX()) + Math.abs(currentNode.getY() - closestPlayer.getY()) <= hero.getInventory().getGun().getRange()) {
@@ -54,7 +55,7 @@ public class MoveAndAttack {
             } else {
                 if ((currentNode.getX() - closestPlayer.getX() == 0 ||
                         currentNode.getY() - closestPlayer.getY() == 0) &&
-                        (Math.abs(currentNode.x-closestPlayer.x)+Math.abs(currentNode.y-closestPlayer.y)) > 1) {
+                        (Math.abs(currentNode.x-closestPlayer.x)+Math.abs(currentNode.y-closestPlayer.y)) > 2) {
                     if (currentNode.getX() - closestPlayer.getX() == 0) {
                         if (PathUtils.checkInsideSafeArea(player, gameMap.getDarkAreaSize(), gameMap.getMapSize())){
                             hero.move("l");

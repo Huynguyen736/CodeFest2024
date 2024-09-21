@@ -294,7 +294,15 @@ public class GetSomething {
                         restrictedNodes.addAll(otherPlayesNode);
                         hero.move(_t);
                     } else {
-                        return;
+                        if (hero.getInventory().getListHealingItem().size() == 4) {
+                            HealingItem _tHealing = HealingList.getFirst();
+                            for (HealingItem healing: hero.getInventory().getListHealingItem()) {
+                                if (_tHealing.getHealingHP() > healing.getHealingHP()) {
+                                    _tHealing = healing;
+                                }
+                            }
+                            hero.useItem(_tHealing.getId());
+                        }
                     }
                 }
             }

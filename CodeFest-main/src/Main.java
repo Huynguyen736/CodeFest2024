@@ -29,7 +29,7 @@ import java.util.Objects;
 
 public class Main {
     private static final String SERVER_URL = "https://cf-server.jsclub.dev";
-    private static final String GAME_ID = "171690";
+    private static final String GAME_ID = "152548";
     private static final String PLAYER_NAME = "test-03";
     private static final String PLAYER_KEY = "ed866d66-b1ec-4578-b5ad-9f12b9f55a23";
     private static final Logger log = LogManager.getLogger(Main.class);
@@ -39,7 +39,7 @@ public class Main {
     public static int closestPlayerCount = 0;
     public static int closestPlayerDis = 0;
     public static int tackleCount = 0;
-    public static Node closestPlayerNode = null;
+    public static Node PlayerCurrentNode = null;
     static String closestPlayerID = null;
 
     public static int portionU = 3;
