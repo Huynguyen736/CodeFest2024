@@ -10,11 +10,13 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../OnlyOne/CodeFest2024-SDK-1.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../CodeFest2024-SDK-1.6.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="io.socket.client" level="project" />
+    <orderEntry type="library" name="apache.logging.log4j.core" level="application" />
   </component>
 </module>

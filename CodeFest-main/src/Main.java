@@ -29,8 +29,8 @@ import java.util.Objects;
 
 public class Main {
     private static final String SERVER_URL = "https://cf-server.jsclub.dev";
-    private static final String GAME_ID = "106051";
-    private static final String PLAYER_NAME = "Tu Tru";
+    private static final String GAME_ID = "179855";
+    private static final String PLAYER_NAME = "test-02";
     private static final String PLAYER_KEY = "ed866d66-b1ec-4578-b5ad-9f12b9f55a23";
     private static final Logger log = LogManager.getLogger(Main.class);
 
@@ -108,7 +108,7 @@ public class Main {
                     Node gasNode = new Node(closestGas.getX(), closestGas.getY());
 
 //                    tactic for game
-                    if (PathUtils.getShortestPath(gameMap, restrictedNodesAll, player, closestPlayer, false).length() < 25) {
+                    if (PathUtils.getShortestPath(gameMap, restrictedNodesAll, player, closestPlayer, false).length() < 5) {
                         if (!(Objects.equals(closestPlayerID, closestPlayer.getId()))) {
                             closestPlayerID = closestPlayer.getId();
                             closestPlayerCount = 0;
@@ -139,16 +139,13 @@ public class Main {
 
                     if (player.getHp() <= 60) {
                         List<HealingItem> HealingItems = hero.getInventory().getListHealingItem();
-                        if (HealingItems.getFirst().getId() != null) {
+                        if (!HealingItems.isEmpty()) {
                             hero.useItem(HealingItems.getFirst().getId());
                         }
                     }
-                    System.out.println(gameMap.getDarkAreaSize());
+
                     if (tackleCount <= 8) {
                         if (closestPlayerCount <= 5) {
-                            if (hero.getInventory().getMelee().getId() == "HAND") {
-                                GetSomething.getMelee(hero, restrictedNodesAll, otherPlayerNodes, player);
-                            }
                             GetSomething.getMelee(hero, restrictedNodesAll, otherPlayerNodes, player);
                             GetSomething.getArmor(hero, restrictedNodesAll, otherPlayerNodes, player);
                             GetSomething.getHealing(hero, restrictedNodesAll, otherPlayerNodes, player);
@@ -161,7 +158,7 @@ public class Main {
                                 MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll);
                             }else {
                                 if (gameMap.getDarkAreaSize() < 24){
-                                    if ((Math.abs(closestPlayer.x-player.x)+Math.abs(closestPlayer.y-player.y)) > 1) {
+                                    if ((Math.abs(closestPlayer.x-closestGas.x)+Math.abs(closestPlayer.y-closestGas.y)) > 1) {
                                         if (player.x - closestPlayer.x > 0) {
                                             closestGas.x = closestGas.x + 1;
                                         } else {
@@ -170,6 +167,10 @@ public class Main {
                                         hero.move(PathUtils.getShortestPath(gameMap, restrictedNodesGas, player, closestGas, false));
                                     }else {
                                         hero.move(PathUtils.getShortestPath(gameMap, restrictedNodesGas, player, closestGas, false));
+                                    }
+                                } else {
+                                    if (player.x != 24 && player.y != 24) {
+                                        hero.move(PathUtils.getShortestPath(gameMap, restrictedNodesAll, player, new Node(24, 24), false));
                                     }
                                 }
                             }
