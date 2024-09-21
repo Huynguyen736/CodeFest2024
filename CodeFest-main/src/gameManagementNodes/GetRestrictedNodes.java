@@ -30,6 +30,10 @@ public class GetRestrictedNodes {
             restrictedNodes.add(new Node(e.getX()+1, e.getY()));
             restrictedNodes.add(new Node(e.getX(), e.getY()-1));
             restrictedNodes.add(new Node(e.getX(), e.getY()+1));
+            restrictedNodes.add(new Node(e.getX(), e.getY()+2));
+            restrictedNodes.add(new Node(e.getX(), e.getY()-2));
+            restrictedNodes.add(new Node(e.getX()-2, e.getY()));
+            restrictedNodes.add(new Node(e.getX()+2, e.getY()));
             restrictedNodes.add(new Node(e.getX()-1, e.getY()-1));
             restrictedNodes.add(new Node(e.getX()+1, e.getY()+1));
             restrictedNodes.add(new Node(e.getX()-1, e.getY()+1));
@@ -58,6 +62,10 @@ public class GetRestrictedNodes {
             restrictedNodesChess.add(new Node(e.getX()+1, e.getY()));
             restrictedNodesChess.add(new Node(e.getX(), e.getY()-1));
             restrictedNodesChess.add(new Node(e.getX(), e.getY()+1));
+            restrictedNodesChess.add(new Node(e.getX(), e.getY()+2));
+            restrictedNodesChess.add(new Node(e.getX(), e.getY()-2));
+            restrictedNodesChess.add(new Node(e.getX()-2, e.getY()));
+            restrictedNodesChess.add(new Node(e.getX()+2, e.getY()));
             restrictedNodesChess.add(new Node(e.getX()-1, e.getY()-1));
             restrictedNodesChess.add(new Node(e.getX()+1, e.getY()+1));
             restrictedNodesChess.add(new Node(e.getX()-1, e.getY()+1));
@@ -86,6 +94,10 @@ public class GetRestrictedNodes {
             restrictedNodesGas.add(new Node(e.getX()+1, e.getY()));
             restrictedNodesGas.add(new Node(e.getX(), e.getY()-1));
             restrictedNodesGas.add(new Node(e.getX(), e.getY()+1));
+            restrictedNodesGas.add(new Node(e.getX(), e.getY()+2));
+            restrictedNodesGas.add(new Node(e.getX(), e.getY()-2));
+            restrictedNodesGas.add(new Node(e.getX()-2, e.getY()));
+            restrictedNodesGas.add(new Node(e.getX()+2, e.getY()));
             restrictedNodesGas.add(new Node(e.getX()-1, e.getY()-1));
             restrictedNodesGas.add(new Node(e.getX()+1, e.getY()+1));
             restrictedNodesGas.add(new Node(e.getX()-1, e.getY()+1));

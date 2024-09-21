@@ -29,7 +29,7 @@ import java.util.Objects;
 
 public class Main {
     private static final String SERVER_URL = "https://cf-server.jsclub.dev";
-    private static final String GAME_ID = "125555";
+    private static final String GAME_ID = "146368";
     private static final String PLAYER_NAME = "test-02";
     private static final String PLAYER_KEY = "ed866d66-b1ec-4578-b5ad-9f12b9f55a23";
     private static final Logger log = LogManager.getLogger(Main.class);
@@ -40,6 +40,7 @@ public class Main {
     public static int closestPlayerDis = 0;
     public static int tackleCount = 0;
     public static Node closestPlayerNode = null;
+    public static boolean moveToConcer = false;
 
     public static void main(String[] args) throws IOException {
         Hero hero = new Hero(GAME_ID, PLAYER_NAME, PLAYER_KEY);
@@ -186,8 +187,8 @@ public class Main {
                                         hero.move(PathUtils.getShortestPath(gameMap, restrictedNodesGas, player, closestGas, false));
                                     }
                                 } else {
-                                    if (player.x != 24 && player.y != 24) {
-                                        hero.move(PathUtils.getShortestPath(gameMap, restrictedNodesAll, player, new Node(24, 24), false));
+                                    if (player.x != 25 && player.y != 25) {
+                                        hero.move(PathUtils.getShortestPath(gameMap, restrictedNodesAll, player, new Node(25, 25), false));
                                     }
                                 }
                             }
