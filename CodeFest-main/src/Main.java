@@ -137,12 +137,29 @@ public class Main {
                         closestPlayerCount = 0;
                     }
 
-                    if (player.getHp() <= 60) {
+
+                    if (player.getIsAlive()) {
+                        boolean isUseHealing = false;
                         List<HealingItem> HealingItems = hero.getInventory().getListHealingItem();
                         if (!HealingItems.isEmpty()) {
-                            hero.useItem(HealingItems.getFirst().getId());
+//                            hero.useItem(HealingItems.getFirst().getId());
+                            for (HealingItem myHealItem : HealingItems) {
+                                if (player.getHp() + myHealItem.getHealingHP() < 100) {
+                                    hero.useItem(myHealItem.getId());
+                                    isUseHealing = true;
+                                }
+                                if (!isUseHealing) {
+                                    if (player.getHp() < 60) {
+                                        hero.useItem(HealingItems.getFirst().getId());
+                                        isUseHealing = true;
+                                    }
+                                }
+
+                            }
+
                         }
                     }
+
 
                     if (tackleCount <= 8) {
                         if (closestPlayerCount <= 5) {
