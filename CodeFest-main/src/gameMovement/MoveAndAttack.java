@@ -16,34 +16,19 @@ public class MoveAndAttack {
             GameMap gameMap = hero.getGameMap();
             Player player = gameMap.getCurrentPlayer();
 
-            if (Atk) {
-                if (currentNode.getX() - closestPlayer.getX() == 0){
-                    if (currentNode.getY() > closestPlayer.getY()){
-                        hero.move("u");
-                    } else {hero.move("d");}
-                } else {
-                    if (currentNode.getX() < closestPlayer.getX()){
-                        hero.move("l");
-                    } else {hero.move("r");}
-                }
-                Atk = false;
-            } else if (hero.getInventory().getThrowable() != null && PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, closestPlayer, false).length() >= 5) {
+            if (hero.getInventory().getThrowable() != null && PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, closestPlayer, false).length() >= 5) {
                 // Check for nearby enemies to throw
                 if ((Math.abs(currentNode.getX() - closestPlayer.getX()) <= 1 ||
                         Math.abs(currentNode.getY() - closestPlayer.getY()) <= 1) &&
                         Math.abs(currentNode.getX() - closestPlayer.getX()) + Math.abs(currentNode.getY() - closestPlayer.getY()) <= hero.getInventory().getThrowable().getRange()) {
                     if (closestPlayer.getY() > currentNode.getY()) {
                         hero.throwItem("u");
-                        Atk = true;
                     } else if (closestPlayer.getY() < currentNode.getY()) {
                         hero.throwItem("d");
-                        Atk = true;
                     } else if (closestPlayer.getX() < currentNode.getX()) {
                         hero.throwItem("l");
-                        Atk = true;
                     } else if (closestPlayer.getX() > currentNode.getX()) {
                         hero.throwItem("r");
-                        Atk = true;
                     }
                 } else {
                     closestPlayer = getClosestSomething.getClosestPlayer(otherPlayers, player);
@@ -55,16 +40,12 @@ public class MoveAndAttack {
                         Math.abs(currentNode.getX() - closestPlayer.getX()) + Math.abs(currentNode.getY() - closestPlayer.getY()) <= hero.getInventory().getGun().getRange()) {
                     if (closestPlayer.getY() > currentNode.getY()) {
                         hero.shoot("u");
-                        Atk = true;
                     } else if (closestPlayer.getY() < currentNode.getY()) {
                         hero.shoot("d");
-                        Atk = true;
                     } else if (closestPlayer.getX() < currentNode.getX()) {
                         hero.shoot("l");
-                        Atk = true;
                     } else if (closestPlayer.getX() > currentNode.getX()) {
                         hero.shoot("r");
-                        Atk = true;
                     }
                 } else {
                     closestPlayer = getClosestSomething.getClosestPlayer(otherPlayers, player);

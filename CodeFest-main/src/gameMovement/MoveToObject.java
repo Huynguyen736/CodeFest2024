@@ -38,7 +38,7 @@ public class MoveToObject {
                     hero.move("r");
                 }
             } else {
-                closestGas = getClosestSomething.getClosestObstacle(trapList, player);
+                closestGas = getClosestSomething.getClosestObstacle(trapList, player, gameMap);
                 hero.move(PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, closestGas, false));
 
             }

@@ -29,8 +29,8 @@ import java.util.Objects;
 
 public class Main {
     private static final String SERVER_URL = "https://cf-server.jsclub.dev";
-    private static final String GAME_ID = "146368";
-    private static final String PLAYER_NAME = "test-02";
+    private static final String GAME_ID = "195548";
+    private static final String PLAYER_NAME = "test-03";
     private static final String PLAYER_KEY = "ed866d66-b1ec-4578-b5ad-9f12b9f55a23";
     private static final Logger log = LogManager.getLogger(Main.class);
 
@@ -40,10 +40,13 @@ public class Main {
     public static int closestPlayerDis = 0;
     public static int tackleCount = 0;
     public static Node closestPlayerNode = null;
-    public static boolean moveToConcer = false;
+    static String closestPlayerID = null;
+
+    public static int portionU = 3;
+    public static int portionD = 2;
 
     public static void main(String[] args) throws IOException {
-        Hero hero = new Hero(GAME_ID, PLAYER_NAME, PLAYER_KEY);
+        Hero hero = new Hero(GAME_ID , PLAYER_NAME, PLAYER_KEY);
         countStep = GetStepApproach.setupStep();
 
         Emitter.Listener onMapUpdate = new Emitter.Listener() {
@@ -91,52 +94,68 @@ public class Main {
 
 
                     List<Obstacle> trapList = new ArrayList<>(gameMap.getListTraps());
-                    Obstacle closestGas = getClosestSomething.getClosestObstacle(trapList, player);
+                    Obstacle closestGas = getClosestSomething.getClosestObstacle(trapList, player, gameMap);
 
                     //Get closest chess
                     List<Obstacle> chestList = new ArrayList<>(gameMap.getListChests());
-                    Obstacle closestChest = gameManagement.getClosestSomething.getClosestObstacle(chestList, player);
+                    Obstacle closestChest = gameManagement.getClosestSomething.getClosestObstacle(chestList, player, gameMap);
 
 //                    Get Gun
                     //GetGuner.getGun(hero, currentNode, restrictedNodes, otherPlayerNodes, player);
 
 //                    Get player closest
                     Player closestPlayer = getClosestSomething.getClosestPlayer(otherPlayers, player);
-                    Node closestPlayerNode = new Node(closestPlayer.getX(), closestPlayer.getY());
-                    String closestPlayerID = closestPlayer.getId();
+                    System.out.println("closest: " + closestPlayer);
+                    if (closestPlayer != null) {
+                        try {
+                            Node closestPlayerNode = new Node(closestPlayer.getX(), closestPlayer.getY());
+
+                            String path = PathUtils.getShortestPath(gameMap, restrictedNodesAll, player, closestPlayer, false);
+//                    tactic for game
+                            if (path != null && path.length() < 25) {
+                                if (!(Objects.equals(closestPlayerID, closestPlayer.getId()))) {
+                                    closestPlayerID = closestPlayer.getId();
+                                    closestPlayerCount = 0;
+                                    closestPlayerDis = path.length();
+                                    tackleCount = 0;
+                                    System.out.println("yes");
+                                }else {
+                                    if (closestPlayerNode.x == closestPlayer.x && closestPlayerNode.y == closestPlayer.y) {
+                                        tackleCount++;
+                                    } else {
+                                        tackleCount = 0;
+                                    }
+
+                                    closestPlayerNode.x = closestPlayer.x;
+                                    closestPlayerNode.y = closestPlayer.y;
+
+                                    if (PathUtils.getShortestPath(gameMap, restrictedNodesAll, player, closestPlayer, false).length() <= closestPlayerDis){
+                                        closestPlayerCount++;
+                                    }else {
+                                        closestPlayerCount = 0;
+                                    }
+                                }
+                            }
+
+                            if (!closestPlayer.getIsAlive()) {
+                                tackleCount = 0;
+                                closestPlayerCount = 0;
+                            }
+                        } catch (RuntimeException e) {
+                            tackleCount = 0;
+                            closestPlayerCount = 0;
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+                        tackleCount = 0;
+                        closestPlayerCount = 0;
+                    }
+
+
 
 //                     gas tank position
                     Node gasNode = new Node(closestGas.getX(), closestGas.getY());
 
-//                    tactic for game
-                    if (PathUtils.getShortestPath(gameMap, restrictedNodesAll, player, closestPlayer, false).length() < 5) {
-                        if (!(Objects.equals(closestPlayerID, closestPlayer.getId()))) {
-                            closestPlayerID = closestPlayer.getId();
-                            closestPlayerCount = 0;
-                            closestPlayerDis = PathUtils.getShortestPath(gameMap, restrictedNodesAll, player, closestPlayer, false).length();
-
-                        }else {
-                            if (closestPlayerNode.x == closestPlayer.x && closestPlayerNode.y == closestPlayer.y) {
-                                tackleCount++;
-                            } else {
-                                tackleCount = 0;
-                            }
-
-                            closestPlayerNode.x = closestPlayer.x;
-                            closestPlayerNode.y = closestPlayer.y;
-
-                            if (PathUtils.getShortestPath(gameMap, restrictedNodesAll, player, closestPlayer, false).length() <= closestPlayerDis){
-                                closestPlayerCount++;
-                            }else {
-                                closestPlayerCount = 0;
-                            }
-                        }
-                    }
-
-                    if (!closestPlayer.getIsAlive()) {
-                        tackleCount = 0;
-                        closestPlayerCount = 0;
-                    }
 
 
                     if (player.getIsAlive()) {
@@ -160,23 +179,23 @@ public class Main {
 
                         }
                     }
-
-
-                    if (tackleCount <= 8) {
+                    System.out.println(gameMap.getDarkAreaSize());
+                    System.out.println("Tackle: " + tackleCount);
+                    if (tackleCount <= 3) {
                         if (closestPlayerCount <= 5) {
-                            GetSomething.getMelee(hero, restrictedNodesAll, otherPlayerNodes, player);
-                            GetSomething.getArmor(hero, restrictedNodesAll, otherPlayerNodes, player);
-                            GetSomething.getHealing(hero, restrictedNodesAll, otherPlayerNodes, player);
-                            GetSomething.getThrowable(hero, restrictedNodesAll, otherPlayerNodes, player);
-                            GetSomething.getGun(hero, restrictedNodesAll, otherPlayerNodes, player);
-
                             GetSomething.getChess(hero, restrictedNodesChess, otherPlayerNodes, player, closestChest);
+
+                            GetSomething.getGun(hero, restrictedNodesAll, otherPlayerNodes, player);
+                            GetSomething.getThrowable(hero, restrictedNodesAll, otherPlayerNodes, player);
+                            GetSomething.getHealing(hero, restrictedNodesAll, otherPlayerNodes, player);
+                            GetSomething.getArmor(hero, restrictedNodesAll, otherPlayerNodes, player);
+                            GetSomething.getMelee(hero, restrictedNodesAll, otherPlayerNodes, player);
                         } else {
                             if (player.getHp() > 30){
                                 MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll);
                             }else {
                                 if (gameMap.getDarkAreaSize() < 24){
-                                    if ((Math.abs(closestPlayer.x-closestGas.x)+Math.abs(closestPlayer.y-closestGas.y)) > 1) {
+                                    if ((Math.abs(closestPlayer.x-player.x)+Math.abs(closestPlayer.y-player.y)) > 1) {
                                         if (player.x - closestPlayer.x > 0) {
                                             closestGas.x = closestGas.x + 1;
                                         } else {
@@ -193,7 +212,7 @@ public class Main {
                                 }
                             }
                         }
-                    }else {
+                    }else if (closestPlayer != null) {
                         MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll);
                     }
 
