@@ -1,5 +1,6 @@
 
 import functionOfPlayer.GetSomething;
+import functionOfPlayer.RunInSideSafePlace;
 import gameManagement.getClosestSomething;
 import gameManagementDistances.SortDistancer;
 import gameManagementNodes.GetOtherPlayerNodes;
@@ -29,7 +30,7 @@ import java.util.Objects;
 
 public class Main {
     private static final String SERVER_URL = "https://cf-server.jsclub.dev";
-    private static final String GAME_ID = "123409";
+    private static final String GAME_ID = "156389";
     private static final String PLAYER_NAME = "test-03";
     private static final String PLAYER_KEY = "ed866d66-b1ec-4578-b5ad-9f12b9f55a23";
     private static final Logger log = LogManager.getLogger(Main.class);
@@ -39,16 +40,16 @@ public class Main {
     public static int closestPlayerCount = 0;
     public static int closestPlayerDis = 0;
     public static int tackleCount = 0;
-    public static Node PlayerCurrentNode = null;
-    static String closestPlayerID = null;
+    public static String closestPlayerID = null;
 
-    public static int portionU = 3;
-    public static int portionD = 2;
+    public static List<Integer> dis = new ArrayList<>();
+    public static int countAttack = 0;
+
+    public static int preDarkSize;
 
     public static void main(String[] args) throws IOException {
         Hero hero = new Hero(GAME_ID , PLAYER_NAME, PLAYER_KEY);
         countStep = GetStepApproach.setupStep();
-
         Emitter.Listener onMapUpdate = new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -56,6 +57,11 @@ public class Main {
 //                    Game map
                     GameMap gameMap = hero.getGameMap();
                     gameMap.updateOnUpdateMap(args[0]);
+
+                    boolean darkBig = false;
+                    if (preDarkSize != gameMap.getDarkAreaSize())
+                        darkBig = true;
+
                     System.out.println();
 //                    Current Player
                     Player player = gameMap.getCurrentPlayer();
@@ -94,11 +100,14 @@ public class Main {
 
 
                     List<Obstacle> trapList = new ArrayList<>(gameMap.getListTraps());
-                    Obstacle closestGas = getClosestSomething.getClosestObstacle(trapList, player, gameMap);
+                    Obstacle closestGas = getClosestSomething.getClosestObstacle(darkBig, trapList, player, gameMap);
+
+//                    chay bo
+                    RunInSideSafePlace.run(hero, player, gameMap, new Node(player.getX(), player.getY()), restrictedNodesAll);
 
                     //Get closest chess
                     List<Obstacle> chestList = new ArrayList<>(gameMap.getListChests());
-                    Obstacle closestChest = gameManagement.getClosestSomething.getClosestObstacle(chestList, player, gameMap);
+                    Obstacle closestChest = gameManagement.getClosestSomething.getClosestObstacle(darkBig, chestList, player, gameMap);
 
 //                    Get Gun
                     //GetGuner.getGun(hero, currentNode, restrictedNodes, otherPlayerNodes, player);
@@ -186,19 +195,19 @@ public class Main {
                         if (closestPlayerCount <= 5) {
                             if (hero.getInventory().getMelee().getId() != "HAND" && hero.getInventory().getGun() != null &&
                                     hero.getInventory().getListArmor().size() == 2 && hero.getInventory().getListHealingItem().size() >= 3
-                                    && player.getHp() > 50){
-                                MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll, false);
-                            } else {
+                                    && player.getHp() > 50 && closestPlayer != null){
+                                countAttack = MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll, false, dis, countAttack);
+                            } else if (closestChest != null){
                                 GetSomething.getChess(hero, restrictedNodesChess, otherPlayerNodes, player, closestChest);
                             }
-                            GetSomething.getGun(hero, restrictedNodesAll, otherPlayerNodes, player);
-                            GetSomething.getThrowable(hero, restrictedNodesAll, otherPlayerNodes, player);
+                            GetSomething.getGun(darkBig, hero, restrictedNodesAll, otherPlayerNodes, player);
+                            GetSomething.getThrowable(darkBig, hero, restrictedNodesAll, otherPlayerNodes, player);
                             GetSomething.getHealing(hero, restrictedNodesAll, otherPlayerNodes, player);
                             GetSomething.getArmor(hero, restrictedNodesAll, otherPlayerNodes, player);
-                            GetSomething.getMelee(hero, restrictedNodesAll, otherPlayerNodes, player);
+                            GetSomething.getMelee(darkBig, hero, restrictedNodesAll, restrictedNodesChess, otherPlayerNodes, closestChest, otherPlayerNodes, player);
                         } else {
                             if (player.getHp() > 30){
-                                MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll, true);
+                                countAttack =  MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll, true, dis, countAttack);
                             }else {
                                 if (gameMap.getDarkAreaSize() < 24){
                                     if ((Math.abs(closestPlayer.x-player.x)+Math.abs(closestPlayer.y-player.y)) > 1) {
@@ -218,10 +227,13 @@ public class Main {
                                 }
                             }
                         }
-                    }else if (closestPlayer != null) {
-                        MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll, false);
+                    } else if (closestPlayer != null) {
+                        countAttack = MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll, false, dis, countAttack);
                     }
 
+
+
+                    preDarkSize = gameMap.getDarkAreaSize();
 
 //                    for (int i = 0; i < hero.getInventory().getListHealingItem().size(); i++) {
 //                        if (player.getHp() >= 80) {

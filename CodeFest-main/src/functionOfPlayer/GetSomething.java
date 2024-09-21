@@ -18,7 +18,7 @@ import java.util.Objects;
 
 public class GetSomething {
     public static final int step = 7;
-    public static void getGun(Hero hero, List<Node> restrictedNodes, List<Node> otherPlayesNode, Player player) {
+    public static void getGun(boolean darkBig, Hero hero, List<Node> restrictedNodes, List<Node> otherPlayesNode, Player player) {
 
         try {
             Priority priority = new Priority();
@@ -34,7 +34,7 @@ public class GetSomething {
                 Weapon targetGun = gunList.getFirst();
 
                 for (Weapon gun : gunList) {
-                    if (InSafePlaceChecker.checkWeapon(gun, gameMap) &&
+                    if (InSafePlaceChecker.checkWeapon(gun, gameMap, darkBig) &&
                             DistanceCalculator.calc(gun, player) < DistanceCalculator.calc(targetGun, player))
                         targetGun = gun;
                 }
@@ -68,7 +68,7 @@ public class GetSomething {
     }
 
 
-    public static void getMelee(Hero hero, List<Node> restrictedNodes, List<Node> otherPlayesNode, Player player) {
+    public static void getMelee(boolean darkBig, Hero hero, List<Node> restrictedNodes, List<Node> restrictedNodesChess, List<Node> otherPlayerNodes, Obstacle closestChest, List<Node> otherPlayesNode, Player player) {
 
         try {
             GameMap gameMap = hero.getGameMap();
@@ -84,18 +84,27 @@ public class GetSomething {
                 Weapon targetMelee = meleeList.getFirst();
 
                 for (Weapon melee : meleeList) {
-                    if (InSafePlaceChecker.checkWeapon(melee, gameMap) &&
+                    if (InSafePlaceChecker.checkWeapon(melee, gameMap, darkBig) &&
                             DistanceCalculator.calc(melee, player) < DistanceCalculator.calc(targetMelee, player))
                         targetMelee = melee;
                 }
 
                 if (player.getX() == targetMelee.getX() && player.getY() == targetMelee.getY()) {
-                    if (!Objects.equals(hero.getInventory().getMelee().getId(), "HAND") ||
+                    if (!Objects.equals(hero.getInventory().getMelee().getId(), "HAND") &&
                             Priority.getMeleePriority(hero.getInventory().getMelee().getId()) < Priority.getMeleePriority(gameMap.getElementByIndex(player.getX(), player.getY()).getId())) {
                         hero.revokeItem(hero.getInventory().getMelee().getId());
-                    }
-                    hero.pickupItem();
+                        hero.pickupItem();
                         pickedUpMelee[0] = true;
+                    } else if (Objects.equals(hero.getInventory().getMelee().getId(), "HAND")) {
+                        hero.pickupItem();
+                        pickedUpMelee[0] = true;
+                    } else {
+                        if (closestChest != null)
+                            GetSomething.getChess(hero, restrictedNodesChess, otherPlayerNodes, player, closestChest);
+                        else
+                            hero.move("u");
+                    }
+                    return;
                 } else {
                     String _t = PathUtils.getShortestPath(gameMap, restrictedNodes, player, targetMelee, false);
                     if (_t != null && _t.length() <= step) {
@@ -124,7 +133,7 @@ public class GetSomething {
 
     }
 
-    public static void getThrowable(Hero hero, List<Node> restrictedNodes, List<Node> otherPlayesNode, Player player) {
+    public static void getThrowable(boolean darkBig, Hero hero, List<Node> restrictedNodes, List<Node> otherPlayesNode, Player player) {
 
         try {
             GameMap gameMap = hero.getGameMap();
@@ -141,7 +150,7 @@ public class GetSomething {
                 Weapon targetThrowable = ThrowableList.getFirst();
 
                 for (Weapon throwable : ThrowableList) {
-                    if (InSafePlaceChecker.checkWeapon(throwable, gameMap) &&
+                    if (InSafePlaceChecker.checkWeapon(throwable, gameMap, darkBig) &&
                             DistanceCalculator.calc(throwable, player) < DistanceCalculator.calc(targetThrowable, player))
                         targetThrowable = throwable;
                 }
@@ -166,11 +175,13 @@ public class GetSomething {
                             } else {
                                 return;
                             }
-                        }
+                        } else
+                            return;
                         if (!pickedUpThrowable[0]) {
                             restrictedNodes.addAll(otherPlayesNode);
                             hero.move(_t);
-                        }
+                        } else
+                            return;
                     }
                 }
             }
@@ -233,7 +244,8 @@ public class GetSomething {
                 }
 
                 if (player.getX() == targetArmor.getX() && player.getY() == targetArmor.getY()) {
-                    if (hero.getInventory().getListArmor().size() < 2){
+                    if (hero.getInventory().getListArmor().isEmpty() ||
+                            (!hero.getInventory().getListArmor().isEmpty() && hero.getInventory().getListArmor().size() < 2)){
                         hero.pickupItem();
                     } else {
                         return;
@@ -295,13 +307,7 @@ public class GetSomething {
                         hero.move(_t);
                     } else {
                         if (hero.getInventory().getListHealingItem().size() == 4) {
-                            HealingItem _tHealing = HealingList.getFirst();
-                            for (HealingItem healing: hero.getInventory().getListHealingItem()) {
-                                if (_tHealing.getHealingHP() > healing.getHealingHP()) {
-                                    _tHealing = healing;
-                                }
-                            }
-                            hero.useItem(_tHealing.getId());
+                            hero.useItem(hero.getInventory().getListHealingItem().getFirst().getId());
                         }
                     }
                 }

@@ -14,7 +14,7 @@ import java.util.List;
 
 public class MoveToObject {
 
-    public static void moveToTrap(Node closestGas, Node currentNode, Hero hero, List<Obstacle> trapList, List<Node> restrictedNodes, int HP) {
+    public static void moveToTrap(boolean darkBig, Node closestGas, Node currentNode, Hero hero, List<Obstacle> trapList, List<Node> restrictedNodes, int HP) {
         try {
             GameMap gameMap = hero.getGameMap();
             Player player = gameMap.getCurrentPlayer();
@@ -38,7 +38,7 @@ public class MoveToObject {
                     hero.move("r");
                 }
             } else {
-                closestGas = getClosestSomething.getClosestObstacle(trapList, player, gameMap);
+                closestGas = getClosestSomething.getClosestObstacle(darkBig, trapList, player, gameMap);
                 hero.move(PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, closestGas, false));
 
             }

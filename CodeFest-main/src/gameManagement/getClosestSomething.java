@@ -30,13 +30,13 @@ public class getClosestSomething {
         return result;
     }
 
-    public static Obstacle getClosestObstacle(List<Obstacle> elements, Element curPos, GameMap gameMap) {
+    public static Obstacle getClosestObstacle(boolean darkBig, List<Obstacle> elements, Element curPos, GameMap gameMap) {
         Obstacle result = elements.getFirst();
         int minDist = DistanceCalculator.calc(result, curPos);
 
         for (Obstacle e : elements ) {
             int tempDist = DistanceCalculator.calc(e, curPos);
-            if (InSafePlaceChecker.checkChess(e, gameMap) && tempDist < minDist) {
+            if (InSafePlaceChecker.checkChess(e, gameMap, darkBig) && tempDist < minDist) {
                 minDist = tempDist;
                 result = e;
             }
