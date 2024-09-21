@@ -73,7 +73,7 @@ public class GetSomething {
         try {
             GameMap gameMap = hero.getGameMap();
             Weapon isUseMelee = hero.getInventory().getMelee();
-            final boolean[] pickedUpMelee = {isUseMelee != null};
+            final boolean[] pickedUpMelee = {isUseMelee.getId() != "HAND"};
 
             System.out.println("Melee inventory: " + isUseMelee);
             System.out.println("is picked up: " + pickedUpMelee[0]);
@@ -90,7 +90,11 @@ public class GetSomething {
                 }
 
                 if (player.getX() == targetMelee.getX() && player.getY() == targetMelee.getY()) {
-                        hero.pickupItem();
+                    if (!Objects.equals(hero.getInventory().getMelee().getId(), "HAND")) {
+                        hero.revokeItem(hero.getInventory().getMelee().getId());
+                        pickedUpMelee[0] = false;
+                    }
+                    hero.pickupItem();
                         pickedUpMelee[0] = true;
                 } else {
                     String _t = PathUtils.getShortestPath(gameMap, restrictedNodes, player, targetMelee, false);
@@ -102,7 +106,7 @@ public class GetSomething {
                                 }
                                 restrictedNodes.addAll(otherPlayesNode);
                                 hero.move(_t);
-                        }
+                            }
                         if (!pickedUpMelee[0]) {
                             restrictedNodes.addAll(otherPlayesNode);
                             hero.move(_t);
@@ -265,13 +269,21 @@ public class GetSomething {
                 if (player.getX() == targetHealing.getX() && player.getY() == targetHealing.getY()) {
                     if (hero.getInventory().getListHealingItem().size() < 4) {
                         hero.pickupItem();
+                    } else {
+                        return;
                     }
 
                 } else {
                     String _t = PathUtils.getShortestPath(gameMap, restrictedNodes, player, targetHealing, false);
-                    if (_t != null && _t.length() <= step) {
+                    if (_t != null &&
+                            (hero.getInventory().getListHealingItem().isEmpty() ||
+                                    (!hero.getInventory().getListHealingItem().isEmpty() &&
+                                            hero.getInventory().getListHealingItem().size() <= 4)) &&
+                            _t.length() <= step) {
                         restrictedNodes.addAll(otherPlayesNode);
                         hero.move(_t);
+                    } else {
+                        return;
                     }
                 }
             }

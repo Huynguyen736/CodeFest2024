@@ -9,6 +9,9 @@ import java.util.List;
 
 public class getClosestSomething {
     public static Player getClosestPlayer(List<Player> elements, Element curPos) {
+        if (elements.isEmpty())
+            return null;
+
         Player result = elements.getFirst();
         int minDist = DistanceCalculator.calc(result, curPos);
 
