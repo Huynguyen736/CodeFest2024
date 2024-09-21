@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class GetSomething {
-    public static final int step = 20;
+    public static final int step = 7;
     public static void getGun(Hero hero, List<Node> restrictedNodes, List<Node> otherPlayesNode, Player player) {
 
         try {
@@ -289,7 +289,7 @@ public class GetSomething {
                     if (_t != null &&
                             (hero.getInventory().getListHealingItem().isEmpty() ||
                                     (!hero.getInventory().getListHealingItem().isEmpty() &&
-                                            hero.getInventory().getListHealingItem().size() <= 4)) &&
+                                            hero.getInventory().getListHealingItem().size() < 4)) &&
                             _t.length() <= step) {
                         restrictedNodes.addAll(otherPlayesNode);
                         hero.move(_t);

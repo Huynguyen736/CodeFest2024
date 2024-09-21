@@ -29,7 +29,7 @@ import java.util.Objects;
 
 public class Main {
     private static final String SERVER_URL = "https://cf-server.jsclub.dev";
-    private static final String GAME_ID = "195548";
+    private static final String GAME_ID = "171690";
     private static final String PLAYER_NAME = "test-03";
     private static final String PLAYER_KEY = "ed866d66-b1ec-4578-b5ad-9f12b9f55a23";
     private static final Logger log = LogManager.getLogger(Main.class);
@@ -106,12 +106,13 @@ public class Main {
 //                    Get player closest
                     Player closestPlayer = getClosestSomething.getClosestPlayer(otherPlayers, player);
                     System.out.println("closest: " + closestPlayer);
+
+//                    tactic for game
                     if (closestPlayer != null) {
                         try {
                             Node closestPlayerNode = new Node(closestPlayer.getX(), closestPlayer.getY());
 
                             String path = PathUtils.getShortestPath(gameMap, restrictedNodesAll, player, closestPlayer, false);
-//                    tactic for game
                             if (path != null && path.length() < 25) {
                                 if (!(Objects.equals(closestPlayerID, closestPlayer.getId()))) {
                                     closestPlayerID = closestPlayer.getId();
