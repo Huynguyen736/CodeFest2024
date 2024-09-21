@@ -29,7 +29,7 @@ import java.util.Objects;
 
 public class Main {
     private static final String SERVER_URL = "https://cf-server.jsclub.dev";
-    private static final String GAME_ID = "179855";
+    private static final String GAME_ID = "164731";
     private static final String PLAYER_NAME = "test-02";
     private static final String PLAYER_KEY = "ed866d66-b1ec-4578-b5ad-9f12b9f55a23";
     private static final Logger log = LogManager.getLogger(Main.class);
