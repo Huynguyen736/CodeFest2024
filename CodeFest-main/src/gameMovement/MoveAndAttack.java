@@ -10,26 +10,34 @@ import jsclub.codefest2024.sdk.model.players.Player;
 import java.util.List;
 
 public class MoveAndAttack {
-    static String Atk;
-    static Node ple;
-    public static void moveAndAttack(Player closestPlayer, Node currentNode, Hero hero, List<Player> otherPlayers, List<Node> restrictedNodes) {
+    static String Atk = "-";
+    public static void moveAndAttack(Player closestPlayer, Node currentNode, Hero hero, List<Player> otherPlayers, List<Node> restrictedNodes, boolean atkandmove) {
         try {
             GameMap gameMap = hero.getGameMap();
             Player player = gameMap.getCurrentPlayer();
-
-            if (hero.getInventory().getThrowable() != null && PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, closestPlayer, false).length() >= 5) {
+            if (Atk != "-") {
+                if (Atk == "u") {hero.move("u");Atk = "-";}
+                else if (Atk == "d") {hero.move("d");Atk = "-";}
+                else if (Atk == "r") {hero.move("r");Atk = "-";}
+                else if (Atk == "l") {hero.move("l");Atk = "-";}
+            }
+            else if (hero.getInventory().getThrowable() != null && PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, closestPlayer, false).length() >= 5) {
                 // Check for nearby enemies to throw
                 if ((Math.abs(currentNode.getX() - closestPlayer.getX()) <= 1 ||
                         Math.abs(currentNode.getY() - closestPlayer.getY()) <= 1) &&
                         Math.abs(currentNode.getX() - closestPlayer.getX()) + Math.abs(currentNode.getY() - closestPlayer.getY()) <= hero.getInventory().getThrowable().getRange()) {
                     if (closestPlayer.getY() > currentNode.getY()) {
                         hero.throwItem("u");
+                        if (atkandmove) {Atk = "d";}
                     } else if (closestPlayer.getY() < currentNode.getY()) {
                         hero.throwItem("d");
+                        if (atkandmove) {Atk = "u";}
                     } else if (closestPlayer.getX() < currentNode.getX()) {
                         hero.throwItem("l");
+                        if (atkandmove) {Atk = "r";}
                     } else if (closestPlayer.getX() > currentNode.getX()) {
                         hero.throwItem("r");
+                        if (atkandmove) {Atk = "l";}
                     }
                 } else {
                     closestPlayer = getClosestSomething.getClosestPlayer(otherPlayers, player);
@@ -41,12 +49,16 @@ public class MoveAndAttack {
                         Math.abs(currentNode.getX() - closestPlayer.getX()) + Math.abs(currentNode.getY() - closestPlayer.getY()) <= hero.getInventory().getGun().getRange()) {
                     if (closestPlayer.getY() > currentNode.getY()) {
                         hero.shoot("u");
+                        if (atkandmove) {Atk = "d";}
                     } else if (closestPlayer.getY() < currentNode.getY()) {
                         hero.shoot("d");
+                        if (atkandmove) {Atk = "u";}
                     } else if (closestPlayer.getX() < currentNode.getX()) {
                         hero.shoot("l");
+                        if (atkandmove) {Atk = "r";}
                     } else if (closestPlayer.getX() > currentNode.getX()) {
                         hero.shoot("r");
+                        if (atkandmove) {Atk = "l";}
                     }
                 } else {
                     closestPlayer = getClosestSomething.getClosestPlayer(otherPlayers, player);

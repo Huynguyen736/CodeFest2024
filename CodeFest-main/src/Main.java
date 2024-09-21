@@ -29,7 +29,7 @@ import java.util.Objects;
 
 public class Main {
     private static final String SERVER_URL = "https://cf-server.jsclub.dev";
-    private static final String GAME_ID = "152548";
+    private static final String GAME_ID = "123409";
     private static final String PLAYER_NAME = "test-03";
     private static final String PLAYER_KEY = "ed866d66-b1ec-4578-b5ad-9f12b9f55a23";
     private static final Logger log = LogManager.getLogger(Main.class);
@@ -184,8 +184,13 @@ public class Main {
                     System.out.println("Tackle: " + tackleCount);
                     if (tackleCount <= 3) {
                         if (closestPlayerCount <= 5) {
-                            GetSomething.getChess(hero, restrictedNodesChess, otherPlayerNodes, player, closestChest);
-
+                            if (hero.getInventory().getMelee().getId() != "HAND" && hero.getInventory().getGun() != null &&
+                                    hero.getInventory().getListArmor().size() == 2 && hero.getInventory().getListHealingItem().size() >= 3
+                                    && player.getHp() > 50){
+                                MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll, false);
+                            } else {
+                                GetSomething.getChess(hero, restrictedNodesChess, otherPlayerNodes, player, closestChest);
+                            }
                             GetSomething.getGun(hero, restrictedNodesAll, otherPlayerNodes, player);
                             GetSomething.getThrowable(hero, restrictedNodesAll, otherPlayerNodes, player);
                             GetSomething.getHealing(hero, restrictedNodesAll, otherPlayerNodes, player);
@@ -193,7 +198,7 @@ public class Main {
                             GetSomething.getMelee(hero, restrictedNodesAll, otherPlayerNodes, player);
                         } else {
                             if (player.getHp() > 30){
-                                MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll);
+                                MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll, true);
                             }else {
                                 if (gameMap.getDarkAreaSize() < 24){
                                     if ((Math.abs(closestPlayer.x-player.x)+Math.abs(closestPlayer.y-player.y)) > 1) {
@@ -214,7 +219,7 @@ public class Main {
                             }
                         }
                     }else if (closestPlayer != null) {
-                        MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll);
+                        MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll, false);
                     }
 
 
