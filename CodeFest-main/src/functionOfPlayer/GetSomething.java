@@ -90,9 +90,9 @@ public class GetSomething {
                 }
 
                 if (player.getX() == targetMelee.getX() && player.getY() == targetMelee.getY()) {
-                    if (!Objects.equals(hero.getInventory().getMelee().getId(), "HAND")) {
+                    if (!Objects.equals(hero.getInventory().getMelee().getId(), "HAND") ||
+                            Priority.getMeleePriority(hero.getInventory().getMelee().getId()) < Priority.getMeleePriority(gameMap.getElementByIndex(player.getX(), player.getY()).getId())) {
                         hero.revokeItem(hero.getInventory().getMelee().getId());
-                        pickedUpMelee[0] = false;
                     }
                     hero.pickupItem();
                         pickedUpMelee[0] = true;
@@ -106,6 +106,8 @@ public class GetSomething {
                                 }
                                 restrictedNodes.addAll(otherPlayesNode);
                                 hero.move(_t);
+                            } else {
+                                return;
                             }
                         if (!pickedUpMelee[0]) {
                             restrictedNodes.addAll(otherPlayesNode);
@@ -146,8 +148,10 @@ public class GetSomething {
 
                 if (player.getX() == targetThrowable.getX() && player.getY() == targetThrowable.getY()) {
                     if (hero.getInventory().getThrowable() == null){
-                    hero.pickupItem();
-                    pickedUpThrowable[0] = true;
+                        hero.pickupItem();
+                        pickedUpThrowable[0] = true;
+                    } else {
+                        return;
                     }
                 } else {
                     String _t = PathUtils.getShortestPath(gameMap, restrictedNodes, player, targetThrowable, false);
@@ -159,6 +163,8 @@ public class GetSomething {
                                 pickedUpThrowable[0] = false;
                                 restrictedNodes.addAll(otherPlayesNode);
                                 hero.move(_t);
+                            } else {
+                                return;
                             }
                         }
                         if (!pickedUpThrowable[0]) {
@@ -196,7 +202,6 @@ public class GetSomething {
                 } else {
                 restrictedNodes.addAll(otherPlayesNode);
                 Pathway = PathUtils.getShortestPath(gameMap, restrictedNodes, player, closestChest, false);
-                System.out.println("Pathway:" + Pathway);
                 hero.move(Pathway);
             }
         }
@@ -230,13 +235,20 @@ public class GetSomething {
                 if (player.getX() == targetArmor.getX() && player.getY() == targetArmor.getY()) {
                     if (hero.getInventory().getListArmor().size() < 2){
                         hero.pickupItem();
+                    } else {
+                        return;
                     }
 
                 } else {
                     String _t = PathUtils.getShortestPath(gameMap, restrictedNodes, player, targetArmor, false);
-                    if (_t != null && _t.length() <= step) {
+                    if (_t != null &&
+                            _t.length() <= step &&
+                            (hero.getInventory().getListArmor().isEmpty() ||
+                                    !hero.getInventory().getListArmor().isEmpty() && hero.getInventory().getListArmor().size() < 2)) {
                         restrictedNodes.addAll(otherPlayesNode);
                         hero.move(_t);
+                    } else {
+                        return;
                     }
                 }
             }
@@ -255,9 +267,8 @@ public class GetSomething {
 
 
             List<HealingItem> HealingList = gameMap.getListHealingItems();
-
             if (!HealingList.isEmpty()) {
-               HealingItem  targetHealing = HealingList.getFirst();
+               HealingItem targetHealing = HealingList.getFirst();
 
 
                 for (HealingItem healing : HealingList) {

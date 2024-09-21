@@ -29,7 +29,7 @@ import java.util.Objects;
 
 public class Main {
     private static final String SERVER_URL = "https://cf-server.jsclub.dev";
-    private static final String GAME_ID = "121716";
+    private static final String GAME_ID = "195548";
     private static final String PLAYER_NAME = "test-03";
     private static final String PLAYER_KEY = "ed866d66-b1ec-4578-b5ad-9f12b9f55a23";
     private static final Logger log = LogManager.getLogger(Main.class);
@@ -41,6 +41,9 @@ public class Main {
     public static int tackleCount = 0;
     public static Node closestPlayerNode = null;
     static String closestPlayerID = null;
+
+    public static int portionU = 3;
+    public static int portionD = 2;
 
     public static void main(String[] args) throws IOException {
         Hero hero = new Hero(GAME_ID , PLAYER_NAME, PLAYER_KEY);
@@ -91,11 +94,11 @@ public class Main {
 
 
                     List<Obstacle> trapList = new ArrayList<>(gameMap.getListTraps());
-                    Obstacle closestGas = getClosestSomething.getClosestObstacle(trapList, player);
+                    Obstacle closestGas = getClosestSomething.getClosestObstacle(trapList, player, gameMap);
 
                     //Get closest chess
                     List<Obstacle> chestList = new ArrayList<>(gameMap.getListChests());
-                    Obstacle closestChest = gameManagement.getClosestSomething.getClosestObstacle(chestList, player);
+                    Obstacle closestChest = gameManagement.getClosestSomething.getClosestObstacle(chestList, player, gameMap);
 
 //                    Get Gun
                     //GetGuner.getGun(hero, currentNode, restrictedNodes, otherPlayerNodes, player);
@@ -115,7 +118,7 @@ public class Main {
                                     closestPlayerCount = 0;
                                     closestPlayerDis = path.length();
                                     tackleCount = 0;
-
+                                    System.out.println("yes");
                                 }else {
                                     if (closestPlayerNode.x == closestPlayer.x && closestPlayerNode.y == closestPlayer.y) {
                                         tackleCount++;
@@ -155,10 +158,25 @@ public class Main {
 
 
 
-                    if (player.getHp() <= 60) {
+                    if (player.getIsAlive()) {
+                        boolean isUseHealing = false;
                         List<HealingItem> HealingItems = hero.getInventory().getListHealingItem();
-                        if (HealingItems.getFirst().getId() != null) {
-                            hero.useItem(HealingItems.getFirst().getId());
+                        if (!HealingItems.isEmpty()) {
+//                            hero.useItem(HealingItems.getFirst().getId());
+                            for (HealingItem myHealItem : HealingItems) {
+                                if (player.getHp() + myHealItem.getHealingHP() < 100) {
+                                    hero.useItem(myHealItem.getId());
+                                    isUseHealing = true;
+                                }
+                                if (!isUseHealing) {
+                                    if (player.getHp() < 60) {
+                                        hero.useItem(HealingItems.getFirst().getId());
+                                        isUseHealing = true;
+                                    }
+                                }
+
+                            }
+
                         }
                     }
                     System.out.println(gameMap.getDarkAreaSize());
