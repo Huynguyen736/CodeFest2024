@@ -30,7 +30,7 @@ import java.util.Objects;
 
 public class Main {
     private static final String SERVER_URL = "https://cf-server.jsclub.dev";
-    private static final String GAME_ID = "194524";
+    private static final String GAME_ID = "137755";
     private static final String PLAYER_NAME = "test-03";
     private static final String PLAYER_KEY = "ed866d66-b1ec-4578-b5ad-9f12b9f55a23";
     private static final Logger log = LogManager.getLogger(Main.class);
@@ -179,7 +179,7 @@ public class Main {
                                     isUseHealing = true;
                                 }
                                 if (!isUseHealing) {
-                                    if (player.getHp() < 60) {
+                                    if (player.getHp() < 85) {
                                         hero.useItem(HealingItems.getFirst().getId());
                                         isUseHealing = true;
                                     }
@@ -207,10 +207,8 @@ public class Main {
                             GetSomething.getMelee(darkBig, hero, restrictedNodesAll, restrictedNodesChess, otherPlayerNodes, closestChest, otherPlayerNodes, player);
                         } else {
                             if (player.getHp() > 30){
-                                if (closestPlayer != null && closestPlayer.getHp() <= 50)
-                                    countAttack =  MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll, true, dis, countAttack);
-                                else
-                                    GetSomething.getChess(hero, restrictedNodesChess, otherPlayerNodes, player, closestChest);
+                                countAttack =  MoveAndAttack.moveAndAttack(closestPlayer, player, hero, otherPlayers, restrictedNodesAll, true, dis, countAttack);
+
                             }else {
                                 if (gameMap.getDarkAreaSize() < 24){
                                     if ((Math.abs(closestPlayer.x-player.x)+Math.abs(closestPlayer.y-player.y)) > 1) {
@@ -224,8 +222,8 @@ public class Main {
                                         hero.move(PathUtils.getShortestPath(gameMap, restrictedNodesGas, player, closestGas, false));
                                     }
                                 } else {
-                                    if (player.x != 25 && player.y != 25) {
-                                        hero.move(PathUtils.getShortestPath(gameMap, restrictedNodesAll, player, new Node(25, 25), false));
+                                    if (closestChest != null) {
+                                        GetSomething.getChess(hero, restrictedNodesChess, otherPlayerNodes, player, closestChest);
                                     }
                                 }
                             }
