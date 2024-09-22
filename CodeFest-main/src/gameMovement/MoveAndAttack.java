@@ -90,22 +90,42 @@ public class MoveAndAttack {
                     if (closestPlayer.getY() > currentNode.getY()) {
                         hero.shoot("u");
                         if (atkandmove) {
-                            Atk = "d";
+                            if (PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, new Node(player.getX() - 1, player.getY()), false) != null)
+                                Atk = "l";
+                            else if (PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, new Node(player.getX() + 1, player.getY()), false) != null)
+                                Atk = "r";
+                            else
+                                Atk = "-";
                         }
                     } else if (closestPlayer.getY() < currentNode.getY()) {
                         hero.shoot("d");
                         if (atkandmove) {
-                            Atk = "u";
+                            if (PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, new Node(player.getX() - 1, player.getY()), false) != null)
+                                Atk = "l";
+                            else if (PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, new Node(player.getX() + 1, player.getY()), false) != null)
+                                Atk = "r";
+                            else
+                                Atk = "-";
                         }
                     } else if (closestPlayer.getX() < currentNode.getX()) {
                         hero.shoot("l");
                         if (atkandmove) {
-                            Atk = "r";
+                            if (PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, new Node(player.getX(), player.getY() - 1), false) != null)
+                                Atk = "d";
+                            else if (PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, new Node(player.getX(), player.getY() + 1), false) != null)
+                                Atk = "u";
+                            else
+                                Atk = "-";
                         }
                     } else if (closestPlayer.getX() > currentNode.getX()) {
                         hero.shoot("r");
                         if (atkandmove) {
-                            Atk = "l";
+                            if (PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, new Node(player.getX(), player.getY() - 1), false) != null)
+                                Atk = "d";
+                            else if (PathUtils.getShortestPath(gameMap, restrictedNodes, currentNode, new Node(player.getX(), player.getY() + 1), false) != null)
+                                Atk = "u";
+                            else
+                                Atk = "-";
                         }
                     }
                 } else {
