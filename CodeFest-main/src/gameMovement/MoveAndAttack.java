@@ -136,12 +136,20 @@ public class MoveAndAttack {
 
                     if (closestPlayer.getY() > currentNode.getY()) {
                         hero.attack("u");
+                        if (hero.getInventory().getGun() != null)
+                            hero.shoot("u");
                     } else if (closestPlayer.getY() < currentNode.getY()) {
                         hero.attack("d");
+                        if (hero.getInventory().getGun() != null)
+                            hero.shoot("d");
                     } else if (closestPlayer.getX() < currentNode.getX()) {
                         hero.attack("l");
+                        if (hero.getInventory().getGun() != null)
+                            hero.shoot("l");
                     } else if (closestPlayer.getX() > currentNode.getX()) {
                         hero.attack("r");
+                        if (hero.getInventory().getGun() != null)
+                            hero.shoot("r");
                     }
                 } else {
                     closestPlayer = getClosestSomething.getClosestPlayer(otherPlayers, player);
